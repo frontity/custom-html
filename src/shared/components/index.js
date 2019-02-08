@@ -1,28 +1,25 @@
 /* eslint-disable react/no-danger */
 import React from 'react';
 import { arrayOf, shape, string } from 'prop-types';
+import { inject } from 'mobx-react';
 import { Fill } from 'react-slot-fill';
 
-const CustomHtml = ({ customHtml }) => {
-  console.log('custom html:', customHtml);
-  return customHtml.map(({ name, content }) => (
+const CustomHtml = ({ fills }) =>
+  fills.map(({ name, content }) => (
     <Fill key={name} name={name}>
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </Fill>
   ));
-};
 
 CustomHtml.propTypes = {
-  customHtml: arrayOf(
+  fills: arrayOf(
     shape({
       name: string,
       content: string,
     }),
-  ),
+  ).isRequired,
 };
 
-CustomHtml.defaultProps = {
-  customHtml: [],
-};
-
-export default CustomHtml;
+export default inject(({ stores: { customHtml } }) => ({
+  fills: customHtml.fills,
+}))(CustomHtml);
